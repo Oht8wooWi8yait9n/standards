@@ -237,7 +237,7 @@ https://standards.nasa.gov/standard/GSFC/GSFC-STD-87151
 https://standards.nasa.gov/standard/GSFC/GSFC-STD-87151A
 https://standards.nasa.gov/standard/GSFC/GSFC-STD-9100
 https://standards.nasa.gov/standard/JSC/JSC-08080-2
-https://standards.nasa.gov/standard/JSC/JSC-20584
+https://standards.nasa.gov/standard/JSC/JSC-20584-D
 https://standards.nasa.gov/standard/JSC/JSC-20793_D
 https://standards.nasa.gov/standard/JSC/JSC-25863
 https://standards.nasa.gov/standard/JSC/JSC-27301
@@ -539,7 +539,7 @@ https://standards.nasa.gov/system/files/tmp/2026-01-15-NASA-SPEC-5022%20w-Change
 https://standards.nasa.gov/system/files/tmp/Final%20Approved%20NASA-STD-5002_REV%20B%20-%2003-10-2026.pdf
 https://standards.nasa.gov/system/files/tmp/Final%20NASA-STD-5012C%2012-31-2025.pdf
 https://standards.nasa.gov/system/files/tmp/GSFC-HDBK-8007_Admn%20Ext_1.pdf
-https://standards.nasa.gov/system/files/tmp/GSFC-HDBK-8700_Admn%20Ext_Sept.%202025.pdf
+https://standards.nasa.gov/system/files/tmp/GSFC-HDBK-8700_Admn%20Ext_Sept.%202026.pdf
 https://standards.nasa.gov/system/files/tmp/GSFC-STD-1000RevI_Approved_0.pdf
 https://standards.nasa.gov/system/files/tmp/GSFC-STD-6001A_Adm%20Extn_2026.pdf
 https://standards.nasa.gov/system/files/tmp/GSFC-STD-7000B_Approved_Admn%20Ext.pdf
