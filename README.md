@@ -65,6 +65,9 @@ Click **Create Connector** to begin indexing the full NASA Technical Standards l
 
 ## Automated Maintenance & CI/CD
 
-- **GitHub Actions Workflow**: Runs automatically every Sunday at 00:00 UTC (`.github/workflows/update-sitemap.yml`).
+- **Weekly Sitemap Synchronization**: Runs automatically every Sunday at 00:00 UTC (`.github/workflows/update-sitemap.yml`) to crawl all active standards and rebuild the sitemap and URL lists.
+- **Daily Revision Watcher (`NASA-STD-3001`)**: Runs Monday through Friday at 12:00 UTC / 8:00 AM EDT (`.github/workflows/daily-standards-watch.yml`) to check for new revision releases, document approval dates, and PDF filename changes for **NASA-STD-3001 Vol 1** and **Vol 2**.
+  - Automatically files a GitHub Issue (which triggers instant email notifications to watchers) with before/after revision diffs and direct PDF download links whenever a new revision is released.
+- **State Tracking**: `standards_watch.json` tracks known approved revisions to prevent duplicate alert notifications.
 - **Safety Threshold**: Validates that at least 500 URLs are collected before writing, preventing accidental blanking of the sitemap.
 - **Manual Trigger**: Supports on-demand crawl triggers via GitHub Actions `workflow_dispatch`.

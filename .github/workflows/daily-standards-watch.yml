@@ -1,9 +1,9 @@
-name: Update NASA Standards Sitemap
+name: Daily NASA Standards Revision Watcher
 
 on:
   schedule:
-    # Run every Sunday at 00:00 UTC
-    - cron: '0 0 * * 0'
+    # Run Monday through Friday at 12:00 UTC (8:00 AM EDT)
+    - cron: '0 12 * * 1-5'
   workflow_dispatch:
 
 permissions:
@@ -11,7 +11,7 @@ permissions:
   issues: write
 
 jobs:
-  crawl-and-update:
+  watch-standards:
     runs-on: ubuntu-latest
 
     steps:
@@ -28,10 +28,6 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt
 
-      - name: Run NASA Standards Sitemap Generator
-        run: |
-          python generate_standards_sitemap.py
-
       - name: Check watched standards for updates
         id: check_standards
         run: |
@@ -46,14 +42,11 @@ jobs:
             --title "🚨 [Alert] NASA-STD-3001 Revision Update Detected" \
             --body-file alert_summary.md
 
-      - name: Commit and push updated sitemap
+      - name: Commit and push updated state
+        if: steps.check_standards.outputs.changes_detected == 'true'
         run: |
           git config user.name "Aaron Sells"
           git config user.email "aaron.b.sells@nasa.gov"
-          git add standards_sitemap.xml standards_urls.txt standards_watch.json
-          if git diff --staged --quiet; then
-            echo "No changes in NASA standards sitemap. Skipping commit."
-          else
-            git commit -m "chore(sitemap): weekly automated NASA standards synchronization [skip ci]"
-            git push origin main
-          fi
+          git add standards_watch.json
+          git commit -m "chore(standards): update watched standards state [skip ci]"
+          git push origin main
