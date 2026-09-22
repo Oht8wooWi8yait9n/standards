@@ -50,7 +50,7 @@ jobs:
         run: |
           git config user.name "Aaron Sells"
           git config user.email "aaron.b.sells@nasa.gov"
-          git add standards_sitemap.xml standards_urls.txt standards_watch.json
+          git add standards_sitemap.xml standards_urls.txt standards_watch.json sso_locked_standards.md
           if git diff --staged --quiet; then
             echo "No changes in NASA standards sitemap. Skipping commit."
           else
