@@ -30,7 +30,7 @@ Standard web crawlers fail or index empty content on `standards.nasa.gov` due to
      - **207 Standards** reside in `/sites/default/files/standards/...` and return `HTTP/2 200 OK` across all networks.
      - **45 Standards** (including `NASA-STD-3001 Vol 2 Rev F`, `GSFC-STD-1000 Rev I`, and `GSFC-STD-7000B`) reside in `/system/files/tmp/...`.
      - *Empirical Network Finding*: To external clients, personal mobile devices, and **Onyx** (`198.118.24.245`), these 45 files are **100% publicly downloadable with `HTTP/2 200 OK`**. However, when requested from within the NASA internal corporate network (`156.68.x.x` / GFE / VPN), Drupal's private download handler redirects to Launchpad SSO.
-     - **Solution**: The crawler includes all 252 public master PDFs in `standards_sitemap.xml` and `standards_urls.txt` so Onyx indexes their full text, while cataloging the 45 temporary-storage documents in [**`sso_locked_standards.md`**](sso_locked_standards.md) for site administrator cleanup.
+     - **Solution**: The crawler includes all 252 public master PDFs in `standards_sitemap.xml` and `standards_urls.txt` so Onyx indexes their full text, ensuring comprehensive coverage of all approved NASA technical standards.
    - **63 Active Standards** have restricted PDFs (`NASA Internal` or `NASA and NASA Contractors`) with no public link.
    - For all standards, the crawler indexes the public landing page (providing Title, Scope, Responsible Office, and Keywords), ensuring their existence is searchable in Onyx.
 
@@ -53,8 +53,6 @@ The sitemap indexes **581** verified, high-value URLs:
 - **329 Clean HTML Pages**:
   - Detailed metadata pages for each standard
   - Master catalog and technical discipline category landing pages
-- **45 Standards in Temporary Storage Tracked**:
-  - Cataloged in [**`sso_locked_standards.md`**](sso_locked_standards.md) with landing pages and paths for site admin migration to `/sites/default/files/`.
 - **0 Historical Revisions / Cancelled Documents**: 100% excluded to protect search accuracy.
 
 ---
@@ -75,7 +73,7 @@ Click **Create Connector** to begin indexing the full NASA Technical Standards l
 
 ## Automated Maintenance & CI/CD
 
-- **Weekly Sitemap Synchronization**: Runs automatically every Sunday at 00:00 UTC (`.github/workflows/update-sitemap.yml`) to crawl all active standards, update `standards_sitemap.xml`, `standards_urls.txt`, and regenerate `sso_locked_standards.md`.
+- **Weekly Sitemap Synchronization**: Runs automatically every Sunday at 00:00 UTC (`.github/workflows/update-sitemap.yml`) to crawl all active standards, update `standards_sitemap.xml`, and `standards_urls.txt`.
 - **Daily Revision Watcher (`NASA-STD-3001`)**: Runs Monday through Friday at 12:00 UTC / 8:00 AM EDT (`.github/workflows/daily-standards-watch.yml`) to check for new revision releases, document approval dates, and PDF filename changes for **NASA-STD-3001 Vol 1** and **Vol 2**.
   - Automatically files a GitHub Issue (which triggers instant email notifications to watchers) with before/after revision diffs and direct PDF download links whenever a new revision is released.
 - **State Tracking**: `standards_watch.json` tracks known approved revisions to prevent duplicate alert notifications.

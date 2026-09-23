@@ -97,7 +97,6 @@ def main():
     script_dir = os.path.dirname(os.path.abspath(__file__))
     sitemap_path = os.path.join(script_dir, "standards_sitemap.xml")
     urls_txt_path = os.path.join(script_dir, "standards_urls.txt")
-    sso_md_path = os.path.join(script_dir, "sso_locked_standards.md")
 
     # Load existing lastmod timestamps from prior sitemap if available (prevents weekly git churn)
     existing_lastmods = {}
@@ -335,49 +334,6 @@ def main():
         for u in sorted_all_urls:
             f.write(f"{u}\n")
     print(f"[+] Successfully wrote: {urls_txt_path}")
-
-    # 8. Write SSO Locked Standards Inventory (Markdown)
-    sso_records.sort(key=lambda x: x["doc_no"])
-    sso_lines = [
-        "# NASA Technical Standards in Drupal Temporary Storage (`/system/files/tmp/`)",
-        "",
-        f"Last updated: {current_date}",
-        "",
-        f"This inventory tracks **{len(sso_records)}** active NASA Technical Standards that have approved public PDF documents published under `PUBLIC: Upload Publicly Available Standard`, but whose files reside in Drupal's temporary storage path (`/system/files/tmp/...`).",
-        "",
-        "### Ingestion & Network Routing Analysis",
-        "",
-        "1. **Public Availability to Onyx & External Users (`HTTP/2 200 OK`)**:",
-        "   - To external clients, commercial networks, personal mobile devices, and **Onyx** (`198.118.24.245`), these files are **100% publicly downloadable without authentication** (`Content-Type: application/pdf`).",
-        "   - All 45 PDF URLs are **fully included** in `standards_sitemap.xml` and `standards_urls.txt` so Onyx indexes the complete text of these vital standards (such as `NASA-STD-3001 Vol 2 Rev F`, `GSFC-STD-1000 Rev I`, and `GSFC-STD-7000B`).",
-        "",
-        "2. **Internal NASA Intranet SSO Redirection (`HTTP/2 302 -> /saml/login`)**:",
-        "   - On `standards.nasa.gov` (Drupal), standard public files reside under `/sites/default/files/standards/...`.",
-        "   - When an HTTP client connecting from **inside the NASA corporate network** (e.g. `156.68.x.x` / NASA GFE / VPN) requests a file in `/system/files/tmp/`, Drupal's `file_download()` hook intercepts the request and issues an HTTP 302 redirect to NASA Launchpad SSO (`https://auth.launchpad.nasa.gov/kerblogin`).",
-        "   - This creates an unintentional paradox: the general public can download these standards without logging in, but NASA personnel on NASA networks get redirected to Launchpad SSO.",
-        "",
-        "3. **Recommended Action for Site Administrators**:",
-        "   - Site administrators should move these 45 PDF files from `/system/files/tmp/` to `/sites/default/files/standards/NASA/...` so internal NASA staff can access them without unexpected Launchpad redirects.",
-        "",
-        "---",
-        "",
-        "## Inventory of Standards in Temporary Storage",
-        "",
-        "| Document Number | Standard Title | Public Metadata Page | PDF Path (/system/files/tmp/) |",
-        "| :--- | :--- | :--- | :--- |",
-    ]
-
-    for item in sso_records:
-        doc_no = item["doc_no"]
-        title = item["title"].replace("|", "\\|")
-        landing = f"[{doc_no}]({item['landing_url']})"
-        pdf_link = f"[`{item['raw_pdf']}`]({item['pdf_url']})"
-        sso_lines.append(f"| **{doc_no}** | {title} | {landing} | {pdf_link} |")
-
-    sso_lines.append("")
-    with open(sso_md_path, "w", encoding="utf-8") as f:
-        f.write("\n".join(sso_lines))
-    print(f"[+] Saved SSO locked standards inventory: {sso_md_path} ({len(sso_records)} records)")
 
 
 if __name__ == "__main__":
