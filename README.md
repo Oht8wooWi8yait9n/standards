@@ -25,14 +25,14 @@ Standard web crawlers fail or index empty content on `standards.nasa.gov` due to
    - If ingested, obsolete standards pollute vector search results with superseded safety factors, outdated formulas, and cancelled processes.
    - **Solution**: The generator strictly extracts the single approved current revision from `PUBLIC: Upload Publicly Available Standard` and completely purges all historical PDFs and inactive documents.
 
-3. **Public vs. Restricted Standards & Launchpad SSO Isolation**:
-   - **207 Active Standards** have genuinely public, unrestricted PDFs (`/sites/default/files/standards/...`) that are verified accessible without authentication.
-   - **45 Active Standards** have their latest PDFs uploaded under `/system/files/tmp/...` on Drupal, which issues an HTTP 302 redirect to **NASA Launchpad SSO** (`auth.launchpad.nasa.gov`).
-     - If crawled, Onyx would index the HTML of the Launchpad login page (`Access Launchpad`) instead of the engineering standard.
-     - **Solution**: The crawler probes every candidate PDF with HTTP `HEAD` / streaming `GET` and validates both status code and content type. Any link redirecting to Launchpad SSO is **excluded** from `standards_sitemap.xml` and cataloged in [**`sso_locked_standards.md`**](sso_locked_standards.md).
-     - *Investigation Note*: These 45 files require further assessment to determine whether the restriction is intentional (e.g., CUI, ITAR, internal distribution) or unintentional (Drupal temporary directory upload misconfiguration).
+3. **Public vs. Restricted Standards & Network Routing Architecture**:
+   - **252 Active Standards** have approved public PDFs available under `PUBLIC: Upload Publicly Available Standard`:
+     - **207 Standards** reside in `/sites/default/files/standards/...` and return `HTTP/2 200 OK` across all networks.
+     - **45 Standards** (including `NASA-STD-3001 Vol 2 Rev F`, `GSFC-STD-1000 Rev I`, and `GSFC-STD-7000B`) reside in `/system/files/tmp/...`.
+     - *Empirical Network Finding*: To external clients, personal mobile devices, and **Onyx** (`198.118.24.245`), these 45 files are **100% publicly downloadable with `HTTP/2 200 OK`**. However, when requested from within the NASA internal corporate network (`156.68.x.x` / GFE / VPN), Drupal's private download handler redirects to Launchpad SSO.
+     - **Solution**: The crawler includes all 252 public master PDFs in `standards_sitemap.xml` and `standards_urls.txt` so Onyx indexes their full text, while cataloging the 45 temporary-storage documents in [**`sso_locked_standards.md`**](sso_locked_standards.md) for site administrator cleanup.
    - **63 Active Standards** have restricted PDFs (`NASA Internal` or `NASA and NASA Contractors`) with no public link.
-   - For both SSO-locked and restricted standards, the crawler indexes the public landing page (providing Title, Scope, Responsible Office, and Keywords), ensuring their existence is searchable without ingesting login screens.
+   - For all standards, the crawler indexes the public landing page (providing Title, Scope, Responsible Office, and Keywords), ensuring their existence is searchable in Onyx.
 
 4. **Zero-Churn Sitemap Maintenance**:
    - The crawler preserves existing `<lastmod>` dates from the prior sitemap, only stamping newly added or updated documents with the current date.
@@ -42,19 +42,19 @@ Standard web crawlers fail or index empty content on `standards.nasa.gov` due to
 
 ## Indexed Content Overview
 
-The sitemap indexes **536** verified, high-value URLs:
+The sitemap indexes **581** verified, high-value URLs:
 
 - **315 Active NASA Technical Standards Tracked**:
   - Agency-wide Technical Standards (`NASA-STD`)
   - Agency-wide Technical Handbooks (`NASA-HDBK`)
   - Center-specific Standards & Specifications (`GSFC-STD`, `MSFC-SPEC`, `JSC-STD`, etc.)
-- **207 Direct Master PDF Documents (100% Public & Verified)**:
-  - Full-text, high-resolution approved engineering standards and handbooks accessible without credentials.
+- **252 Direct Master PDF Documents (100% Public & Verified for Onyx)**:
+  - Full-text, high-resolution approved engineering standards and handbooks accessible without credentials by Onyx (`198.118.24.245`).
 - **329 Clean HTML Pages**:
   - Detailed metadata pages for each standard
   - Master catalog and technical discipline category landing pages
-- **45 SSO-Locked Documents Documented Separately**:
-  - Tracked with landing page and target path in [**`sso_locked_standards.md`**](sso_locked_standards.md).
+- **45 Standards in Temporary Storage Tracked**:
+  - Cataloged in [**`sso_locked_standards.md`**](sso_locked_standards.md) with landing pages and paths for site admin migration to `/sites/default/files/`.
 - **0 Historical Revisions / Cancelled Documents**: 100% excluded to protect search accuracy.
 
 ---

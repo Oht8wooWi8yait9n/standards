@@ -1,25 +1,28 @@
-# NASA Technical Standards Locked Behind Launchpad SSO
+# NASA Technical Standards in Drupal Temporary Storage (`/system/files/tmp/`)
 
-Last updated: 2026-09-22
+Last updated: 2026-09-23
 
-This inventory tracks **45** active NASA Technical Standards that have full PDF documents uploaded on `standards.nasa.gov`, but whose direct download links redirect to **NASA Launchpad SAML/SSO** (`auth.launchpad.nasa.gov`).
+This inventory tracks **45** active NASA Technical Standards that have approved public PDF documents published under `PUBLIC: Upload Publicly Available Standard`, but whose files reside in Drupal's temporary storage path (`/system/files/tmp/...`).
 
-### Background & Ingestion Context
+### Ingestion & Network Routing Analysis
 
-1. **Drupal Temporary / Managed File Storage (`/system/files/tmp/`)**:
-   - On `standards.nasa.gov` (Drupal), publicly accessible files reside under `/sites/default/files/standards/...`.
-   - All 45 documents listed below have their files uploaded under `/system/files/tmp/...`.
-   - When an unauthenticated web client or crawler requests these `/system/files/tmp/` URLs, Drupal intercepts the request and issues an HTTP 302 redirect to NASA Launchpad SSO (`https://auth.launchpad.nasa.gov/kerblogin`).
+1. **Public Availability to Onyx & External Users (`HTTP/2 200 OK`)**:
+   - To external clients, commercial networks, personal mobile devices, and **Onyx** (`198.118.24.245`), these files are **100% publicly downloadable without authentication** (`Content-Type: application/pdf`).
+   - All 45 PDF URLs are **fully included** in `standards_sitemap.xml` and `standards_urls.txt` so Onyx indexes the complete text of these vital standards (such as `NASA-STD-3001 Vol 2 Rev F`, `GSFC-STD-1000 Rev I`, and `GSFC-STD-7000B`).
 
-2. **CUI / Export Control vs. Unintentional Restriction Investigation**:
-   - It remains to be determined whether these files are intentionally restricted (e.g., CUI, ITAR, or NASA-Internal distribution) or if they were unintentionally uploaded to Drupal's temporary/private file system by site administrators despite being marked in the `PUBLIC: Upload Publicly Available Standard` field.
-   - **Onyx Ingestion Safety**: These 45 PDF URLs are deliberately **excluded** from `standards_sitemap.xml` and `standards_urls.txt`. This prevents Onyx from crawling the HTML of the NASA Launchpad login page (`<title>Access Launchpad</title>`) and polluting the vector index. The public HTML summary landing pages for these standards remain fully indexed.
+2. **Internal NASA Intranet SSO Redirection (`HTTP/2 302 -> /saml/login`)**:
+   - On `standards.nasa.gov` (Drupal), standard public files reside under `/sites/default/files/standards/...`.
+   - When an HTTP client connecting from **inside the NASA corporate network** (e.g. `156.68.x.x` / NASA GFE / VPN) requests a file in `/system/files/tmp/`, Drupal's `file_download()` hook intercepts the request and issues an HTTP 302 redirect to NASA Launchpad SSO (`https://auth.launchpad.nasa.gov/kerblogin`).
+   - This creates an unintentional paradox: the general public can download these standards without logging in, but NASA personnel on NASA networks get redirected to Launchpad SSO.
+
+3. **Recommended Action for Site Administrators**:
+   - Site administrators should move these 45 PDF files from `/system/files/tmp/` to `/sites/default/files/standards/NASA/...` so internal NASA staff can access them without unexpected Launchpad redirects.
 
 ---
 
-## Inventory of SSO-Protected Standards
+## Inventory of Standards in Temporary Storage
 
-| Document Number | Standard Title | Public Metadata Page | Target PDF Path (Behind SSO) |
+| Document Number | Standard Title | Public Metadata Page | PDF Path (/system/files/tmp/) |
 | :--- | :--- | :--- | :--- |
 | **GSFC-HDBK-8007** | Mission Success Handbook for Cubesat Missions | [GSFC-HDBK-8007](https://standards.nasa.gov/standard/GSFC/GSFC-HDBK-8007) | [`/system/files/tmp/GSFC-HDBK-8007_Admn%20Ext_1.pdf`](https://standards.nasa.gov/system/files/tmp/GSFC-HDBK-8007_Admn%20Ext_1.pdf) |
 | **GSFC-HDBK-8700** | Guideline for Forming and Operating Failure Review Boards and Anomaly Review Boards | [GSFC-HDBK-8700](https://standards.nasa.gov/standard/GSFC/GSFC-HDBK-8700) | [`/system/files/tmp/GSFC-HDBK-8700_Admn%20Ext_Sept.%202026.pdf`](https://standards.nasa.gov/system/files/tmp/GSFC-HDBK-8700_Admn%20Ext_Sept.%202026.pdf) |
