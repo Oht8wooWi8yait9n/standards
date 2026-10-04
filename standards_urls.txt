@@ -436,6 +436,7 @@ https://standards.nasa.gov/standard/NASA/NASA-STD-5017
 https://standards.nasa.gov/standard/NASA/NASA-STD-5018
 https://standards.nasa.gov/standard/NASA/NASA-STD-5019
 https://standards.nasa.gov/standard/NASA/NASA-STD-5020
+https://standards.nasa.gov/standard/NASA/NASA-STD-5023
 https://standards.nasa.gov/standard/NASA/NASA-STD-6001
 https://standards.nasa.gov/standard/NASA/NASA-STD-6012
 https://standards.nasa.gov/standard/NASA/NASA-STD-6016
@@ -570,6 +571,7 @@ https://standards.nasa.gov/system/files/tmp/NASA-STD-2018_Revalidated%20-%2001-3
 https://standards.nasa.gov/system/files/tmp/NASA-STD-3001%20Vol%202%20Rev%20F.pdf
 https://standards.nasa.gov/system/files/tmp/NASA-STD-4003A_w-Change%201%20-%20Revalidated%2003-13-2026.pdf
 https://standards.nasa.gov/system/files/tmp/NASA-STD-5020B%20Revalidated%201-5-2026.pdf
+https://standards.nasa.gov/system/files/tmp/NASA-STD-5023%20Final%20Version%208-19-2026_0.pdf
 https://standards.nasa.gov/system/files/tmp/NASA-STD-7001C%20%20-%20Final%207-14-2026.pdf
 https://standards.nasa.gov/system/files/tmp/NASA-STD-8719.12_RevsionB_final.pdf
 https://standards.nasa.gov/system/files/tmp/NASA-STD-8719.30_final.pdf
