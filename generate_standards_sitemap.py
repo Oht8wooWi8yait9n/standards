@@ -15,6 +15,7 @@ import os
 import re
 import sys
 import time
+from html import unescape
 from urllib.parse import urljoin
 import xml.etree.ElementTree as ET
 from xml.sax.saxutils import escape
@@ -160,7 +161,7 @@ def main():
 
         resp = fetch_with_retry(thread_session, std_url)
         if not resp or resp.status_code != 200:
-            return path, "FETCH_ERROR", None, set(), None
+            return path, "FETCH_ERROR", None, set(), None, None
 
         html = resp.text
         doc_no = get_field_val(html, "Document Number") or path.split("/")[-1]
@@ -170,7 +171,7 @@ def main():
 
         # Discard inactive / cancelled standards
         if is_active == "INACTIVE" or "CANCEL" in is_active:
-            return path, "INACTIVE", doc_no, set(), None
+            return path, "INACTIVE", doc_no, set(), None, None
 
         urls = set()
         urls.add(std_url)
@@ -185,6 +186,8 @@ def main():
 
         pdf_url = None
         sso_record = None
+        pdf_source = None
+
         if pub_pdf_match:
             raw_pdf = pub_pdf_match.group(1).split("?")[0].split("#")[0]
             if "historical" not in raw_pdf.lower():
@@ -210,16 +213,39 @@ def main():
                         }
                         urls.add(clean_pdf)
                         pdf_url = clean_pdf
+                        pdf_source = "LOCAL"
                     elif p_resp.status_code == 200 and ("pdf" in content_type or clean_pdf.lower().endswith(".pdf")):
                         urls.add(clean_pdf)
                         pdf_url = clean_pdf
+                        pdf_source = "LOCAL"
+
+        # Check for remote repository PDF (e.g., Stennis ssctdpub repository) if no local PDF attached
+        if not pdf_url:
+            remote_match = re.search(
+                r'Link to Remotely located Standard Document.*?<a\s+[^>]*href=[\"\']([^\"\']+)[\"\']',
+                html,
+                re.DOTALL | re.IGNORECASE,
+            )
+            if remote_match:
+                raw_remote = unescape(remote_match.group(1)).strip()
+                if ".pdf" in raw_remote.lower():
+                    export_val = get_field_val(html, "Export Control/Distribution Authorization")
+                    if "nasa only" not in export_val.lower():
+                        clean_remote = raw_remote.split("#")[0]
+                        p_resp = fetch_with_retry(thread_session, clean_remote, method="HEAD")
+                        if p_resp and p_resp.status_code == 200:
+                            content_type = p_resp.headers.get("Content-Type", "").lower()
+                            if "pdf" in content_type or clean_remote.lower().split("?")[0].endswith(".pdf"):
+                                urls.add(clean_remote)
+                                pdf_url = clean_remote
+                                pdf_source = "REMOTE"
 
         if pdf_url:
             status = "PUBLIC_WITH_PDF"
         else:
             status = "PUBLIC_METADATA_ONLY"
 
-        return path, status, doc_no, urls, sso_record
+        return path, status, doc_no, urls, sso_record, pdf_source
 
     start_time = time.time()
     with concurrent.futures.ThreadPoolExecutor(max_workers=MAX_WORKERS) as executor:
@@ -255,24 +281,31 @@ def main():
     }
 
     sso_records = []
-    for path, status, doc_no, urls, sso_record in results:
+    local_pdf_count = 0
+    remote_pdf_count = 0
+    for path, status, doc_no, urls, sso_record, pdf_source in results:
         stats[status] = stats.get(status, 0) + 1
         all_content_urls.update(urls)
         if sso_record:
             sso_records.append(sso_record)
+        if pdf_source == "LOCAL":
+            local_pdf_count += 1
+        elif pdf_source == "REMOTE":
+            remote_pdf_count += 1
 
     sorted_all_urls = sorted(list(all_content_urls))
-    pdf_urls = [u for u in sorted_all_urls if u.lower().endswith(".pdf")]
-    html_urls = [u for u in sorted_all_urls if not u.lower().endswith(".pdf")]
+    pdf_urls = [u for u in sorted_all_urls if u.lower().split("?")[0].endswith(".pdf")]
+    html_urls = [u for u in sorted_all_urls if not u.lower().split("?")[0].endswith(".pdf")]
 
     print("\n" + "=" * 70)
     print("[+] Summary of Standards Processed:")
     print(f"    - Active Standards with Approved Public PDF: {stats.get('PUBLIC_WITH_PDF', 0)}")
-    print(f"      * Stored in Public Directory (/sites/default/files/): {stats.get('PUBLIC_WITH_PDF', 0) - len(sso_records)}")
-    print(f"      * Stored in Temporary Directory (/system/files/tmp/): {len(sso_records)}")
-    print(f"    - Active Standards (Restricted/Internal Metadata Only): {stats.get('PUBLIC_METADATA_ONLY', 0)}")
-    print(f"    - Inactive / Cancelled Standards Excluded:   {stats.get('INACTIVE', 0)}")
-    print(f"    - Fetch Errors:                              {stats.get('FETCH_ERROR', 0)}")
+    print(f"      * Stored Locally in Public Directory (/sites/default/files/): {local_pdf_count - len(sso_records)}")
+    print(f"      * Stored Locally in Temporary Directory (/system/files/tmp/): {len(sso_records)}")
+    print(f"      * Stored Remotely on Center Server (e.g., Stennis ssctdpub):  {remote_pdf_count}")
+    print(f"    - Active Standards (Restricted/Internal Metadata Only):         {stats.get('PUBLIC_METADATA_ONLY', 0)}")
+    print(f"    - Inactive / Cancelled Standards Excluded:                      {stats.get('INACTIVE', 0)}")
+    print(f"    - Fetch Errors:                                                 {stats.get('FETCH_ERROR', 0)}")
     print(f"\n[+] Total Content URLs Aggregated: {len(sorted_all_urls)}")
     print(f"    - Latest Approved Master PDFs (Public & Onyx): {len(pdf_urls)}")
     print(f"    - Standards Landing & Discipline Pages:        {len(html_urls)}")
@@ -297,7 +330,7 @@ def main():
     for u in sorted_all_urls:
         escaped_url = escape(u)
         lastmod = existing_lastmods.get(u, current_date)
-        if u.lower().endswith(".pdf"):
+        if u.lower().split("?")[0].endswith(".pdf"):
             priority = "0.9"
             changefreq = "monthly"
         elif u.split("standards.nasa.gov")[-1] in DISCIPLINE_PAGES:

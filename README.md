@@ -26,12 +26,16 @@ Standard web crawlers fail or index empty content on `standards.nasa.gov` due to
    - **Solution**: The generator strictly extracts the single approved current revision from `PUBLIC: Upload Publicly Available Standard` and completely purges all historical PDFs and inactive documents.
 
 3. **Public vs. Restricted Standards & Network Routing Architecture**:
-   - **252 Active Standards** have approved public PDFs available under `PUBLIC: Upload Publicly Available Standard`:
-     - **207 Standards** reside in `/sites/default/files/standards/...` and return `HTTP/2 200 OK` across all networks.
-     - **45 Standards** (including `NASA-STD-3001 Vol 2 Rev F`, `GSFC-STD-1000 Rev I`, and `GSFC-STD-7000B`) reside in `/system/files/tmp/...`.
-     - *Empirical Network Finding*: To external clients, personal mobile devices, and **Onyx** (`198.118.24.245`), these 45 files are **100% publicly downloadable with `HTTP/2 200 OK`**. However, when requested from within the NASA internal corporate network (`156.68.x.x` / GFE / VPN), Drupal's private download handler redirects to Launchpad SSO.
-     - **Solution**: The crawler includes all 252 public master PDFs in `standards_sitemap.xml` and `standards_urls.txt` so Onyx indexes their full text, ensuring comprehensive coverage of all approved NASA technical standards.
-   - **63 Active Standards** have restricted PDFs (`NASA Internal` or `NASA and NASA Contractors`) with no public link.
+   - **312 Active Standards** have approved public PDFs available:
+     - **207 Standards** reside locally in Drupal `/sites/default/files/standards/...` and return `HTTP/2 200 OK` across all networks.
+     - **45 Standards** (including `NASA-STD-3001 Vol 2 Rev F`, `GSFC-STD-1000 Rev I`, and `GSFC-STD-7000B`) reside locally in `/system/files/tmp/...`.
+       - *Empirical Network Finding*: To external clients, personal mobile devices, and **Onyx** (`198.118.24.245`), these 45 files are **100% publicly downloadable with `HTTP/2 200 OK`**. However, when requested from within the NASA internal corporate network (`156.68.x.x` / GFE / VPN), Drupal's private download handler redirects to Launchpad SSO.
+     - **60 Standards** from Stennis Space Center (`SSTD-8070-*`) are cleared for *Internet Public* and hosted remotely on Stennis's public document server (`https://ssctdpub.ssc.nasa.gov`), verified and added directly to the sitemap.
+   - **4 Active Standards** do not have a downloadable public PDF:
+     - `RPTSTD-8070-0001`: Institutional restrictions, NASA internal domain only.
+     - `MSFC-STD-3790`: Landing page and document require Launchpad SAML SSO (`/saml/login`).
+     - `SSTD-8070-0006-CONFIG`: Hosted on Stennis internal server (`ssctddoc.ssc.nasa.gov`).
+     - `SSTD-8070-0017-WELD`: Stennis server returns HTTP 400 (document moved/broken upstream).
    - For all standards, the crawler indexes the public landing page (providing Title, Scope, Responsible Office, and Keywords), ensuring their existence is searchable in Onyx.
 
 4. **Zero-Churn Sitemap Maintenance**:
@@ -42,17 +46,17 @@ Standard web crawlers fail or index empty content on `standards.nasa.gov` due to
 
 ## Indexed Content Overview
 
-The sitemap indexes **581** verified, high-value URLs:
+The sitemap indexes **642** verified, high-value URLs:
 
-- **315 Active NASA Technical Standards Tracked**:
+- **316 Active NASA Technical Standards Tracked**:
   - Agency-wide Technical Standards (`NASA-STD`)
   - Agency-wide Technical Handbooks (`NASA-HDBK`)
-  - Center-specific Standards & Specifications (`GSFC-STD`, `MSFC-SPEC`, `JSC-STD`, etc.)
-- **252 Direct Master PDF Documents (100% Public & Verified for Onyx)**:
+  - Center-specific Standards & Specifications (`GSFC-STD`, `MSFC-SPEC`, `JSC-STD`, `SSTD`, etc.)
+- **312 Direct Master PDF Documents (100% Public & Verified for Onyx)**:
   - Full-text, high-resolution approved engineering standards and handbooks accessible without credentials by Onyx (`198.118.24.245`).
-- **329 Clean HTML Pages**:
-  - Detailed metadata pages for each standard
-  - Master catalog and technical discipline category landing pages
+- **330 Clean HTML Pages**:
+  - Detailed metadata landing pages for all 316 standards
+  - Master catalog and 12 technical discipline category landing pages
 - **0 Historical Revisions / Cancelled Documents**: 100% excluded to protect search accuracy.
 
 ---
