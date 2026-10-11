@@ -620,6 +620,7 @@ https://standards.nasa.gov/system/files/tmp/KSC-DE-512-SM_RevM-Change1.pdf
 https://standards.nasa.gov/system/files/tmp/KSC-STD-E-0012_RevH_Final_0.pdf
 https://standards.nasa.gov/system/files/tmp/KSC-STD-Z-0005_RevE-Final_0.pdf
 https://standards.nasa.gov/system/files/tmp/MSFC-SPEC-521_RevD_Approved_2025-06-13.pdf
+https://standards.nasa.gov/system/files/tmp/MSFC-STD-3790_Baseline_Approved_2025-06-10.pdf
 https://standards.nasa.gov/system/files/tmp/NASA%20Imagery%20Procedure%20and%20Metadata%20Standard%20v2_0.pdf
 https://standards.nasa.gov/system/files/tmp/NASA-HDBK-4001A_Final_07152025_0.pdf
 https://standards.nasa.gov/system/files/tmp/NASA-HDBK-4007A%20Final%202-3-2026.pdf
