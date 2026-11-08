@@ -69,7 +69,6 @@ https://standards.nasa.gov/human-factors-and-health
 https://standards.nasa.gov/materials-and-processes-parts
 https://standards.nasa.gov/operations-command-control
 https://standards.nasa.gov/safety-quality-reliability-maintainability
-https://standards.nasa.gov/sites/default/files/standards/GSFC/A/0/gsfc-std-1001A_extension.pdf
 https://standards.nasa.gov/sites/default/files/standards/GSFC/B/0/GSFC-STD-9100B_Approved.pdf
 https://standards.nasa.gov/sites/default/files/standards/GSFC/Baseline/0/GSFC-HDBK-8004_Approved_1.pdf
 https://standards.nasa.gov/sites/default/files/standards/GSFC/Baseline/0/GSFC-HDBK-8010_Approved.pdf
@@ -600,6 +599,7 @@ https://standards.nasa.gov/system/files/tmp/Final%20NASA-STD-5012C%2012-31-2025.
 https://standards.nasa.gov/system/files/tmp/GSFC-HDBK-8007_Admn%20Ext_1.pdf
 https://standards.nasa.gov/system/files/tmp/GSFC-HDBK-8700_Admn%20Ext_Sept.%202026.pdf
 https://standards.nasa.gov/system/files/tmp/GSFC-STD-1000RevI_Approved_0.pdf
+https://standards.nasa.gov/system/files/tmp/GSFC-STD-1001A_Admn%20Ext%202026.pdf
 https://standards.nasa.gov/system/files/tmp/GSFC-STD-6001A_Adm%20Extn_2026.pdf
 https://standards.nasa.gov/system/files/tmp/GSFC-STD-7000B_Approved_Admn%20Ext.pdf
 https://standards.nasa.gov/system/files/tmp/GSFC-STD-8001A_Approved.pdf
